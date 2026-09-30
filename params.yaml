@@ -1,0 +1,18 @@
+project:
+  name: "object-detection-fasterrcnn"
+  seed: 42
+
+dataset:
+  raw_dir: "Hard Hat Workers.v2-raw.voc"
+  processed_dir: "data/processed_real"
+  val_split: 0.15
+
+training:
+  epochs: 10
+  batch_size: 1
+  learning_rate: 0.005
+  save_dir: "artifacts/experiments/fasterrcnn_real_hard_hat_baseline/models"
+
+inference:
+  confidence_threshold: 0.5
+  iou_threshold: 0.5

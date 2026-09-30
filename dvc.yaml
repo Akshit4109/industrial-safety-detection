@@ -1,0 +1,41 @@
+stages:
+  # The real dataset is supplied locally, so no artificial download step is used.
+  prepare_real:
+    cmd: .venv/bin/python scripts/prepare_real_data.py
+    deps:
+      - Hard Hat Workers.v2-raw.voc
+      - configs/config.yaml
+      - scripts/prepare_real_data.py
+      - src/object_detection/data/voc.py
+    params:
+      - project.seed
+      - dataset.val_split
+    outs:
+      - data/processed_real
+      - artifacts/metrics/dataset_report.json
+  train:
+    cmd: .venv/bin/python scripts/train.py
+    deps:
+      - data/processed_real
+      - configs/config.yaml
+      - scripts/train.py
+      - src/object_detection/models/model_factory.py
+      - src/object_detection/training/trainer.py
+    params:
+      - training.epochs
+      - training.batch_size
+      - training.learning_rate
+    outs:
+      - artifacts/experiments/fasterrcnn_real_hard_hat_baseline/models/best_model.pth
+      - artifacts/experiments/fasterrcnn_real_hard_hat_baseline/models/last_model.pth
+  evaluate:
+    cmd: .venv/bin/python scripts/evaluate.py
+    deps:
+      - artifacts/experiments/fasterrcnn_real_hard_hat_baseline/models/best_model.pth
+      - data/processed_real
+      - configs/config.yaml
+      - scripts/evaluate.py
+      - src/object_detection/evaluation/evaluator.py
+    metrics:
+      - artifacts/metrics/evaluation.json:
+          cache: false

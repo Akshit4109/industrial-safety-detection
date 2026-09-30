@@ -1,0 +1,59 @@
+project:
+  name: "object-detection-fasterrcnn"
+  version: "1.0.0"
+  seed: 42
+
+dataset:
+  # The supplied Roboflow/Pascal-VOC hard-hat dataset is the primary dataset.
+  # The legacy synthetic data remains untouched in data/raw for regression use.
+  raw_dir: "Hard Hat Workers.v2-raw.voc"
+  processed_dir: "data/processed_real"
+  source: "Hard Hat Workers (Roboflow public dataset)"
+  source_url: "https://public.roboflow.ai/object-detection/hard-hat-workers"
+  license: "Public Domain (per README.dataset.txt)"
+  num_classes: 4  # 0: background, 1: helmet, 2: head, 3: person
+  class_mapping:
+    0: "__background__"
+    1: "helmet"
+    2: "head"
+    3: "person"
+  # Validation is carved reproducibly from only the supplied train partition.
+  val_split: 0.15
+  # Passed to Torchvision's GeneralizedRCNNTransform. This prevents its
+  # 800/1333 default upscaling, which is excessive for this 400–500px export.
+  min_size: 640
+  max_size: 768
+
+model:
+  name: "fasterrcnn_resnet50_fpn"
+  pretrained: true
+  trainable_backbone_layers: 3
+  box_score_thresh: 0.5
+  box_nms_thresh: 0.5
+
+training:
+  experiment_name: "fasterrcnn_real_hard_hat_baseline"
+  device: "auto"  # auto prefers CUDA, then Apple MPS, then CPU
+  epochs: 10
+  # MPS uses unified system memory. One image at a time is the stable starting
+  # point for ResNet-50-FPN; gradients are accumulated for an effective batch 2.
+  batch_size: 1
+  gradient_accumulation_steps: 2
+  max_gradient_norm: 10.0
+  mps_empty_cache_interval: 10
+  learning_rate: 0.005
+  weight_decay: 0.0005
+  momentum: 0.9
+  lr_scheduler: "step"
+  lr_step_size: 3
+  lr_gamma: 0.1
+  num_workers: 0
+  save_dir: "artifacts/experiments/fasterrcnn_real_hard_hat_baseline/models"
+  log_dir: "runs/fasterrcnn_real_hard_hat_baseline"
+  augmentations:
+    horizontal_flip_probability: 0.5
+    brightness_contrast: false
+
+inference:
+  confidence_threshold: 0.5
+  iou_threshold: 0.5

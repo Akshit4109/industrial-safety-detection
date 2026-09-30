@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "object_detection"
+version = "0.1.0"
+description = "Production-Grade Object Detection System using Faster R-CNN"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "torch",
+    "torchvision",
+    "opencv-python",
+    "pillow",
+    "numpy",
+    "pyyaml",
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "tensorboard",
+    "dvc",
+    "pytest",
+    "httpx",
+    "requests",
+    "tqdm",
+    "pycocotools"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

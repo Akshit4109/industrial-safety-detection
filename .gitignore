@@ -1,0 +1,46 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Data & Models (tracked via DVC)
+data/raw/
+data/processed/
+data/processed_real/
+Hard Hat Workers.v2-raw.voc/
+artifacts/
+runs/
+logs/
+.dvc/cache/
+.dvc/tmp/
+
+# Local tooling
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# IDE & OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.tmp

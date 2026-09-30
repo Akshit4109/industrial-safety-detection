@@ -1,0 +1,17 @@
+torch
+torchvision
+opencv-python
+pillow
+numpy
+pyyaml
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+tensorboard
+dvc
+pytest
+httpx
+requests
+tqdm
+pycocotools

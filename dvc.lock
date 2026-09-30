@@ -1,0 +1,141 @@
+schema: '2.0'
+stages:
+  download:
+    cmd: .venv/bin/python scripts/download_data.py
+    deps:
+    - path: scripts/download_data.py
+      hash: md5
+      md5: 884ab6a59341fbd1b6d694d584c5be0b
+      size: 653
+    - path: src/object_detection/data/download.py
+      hash: md5
+      md5: adaf1c1448f4cbca5029c25d8c8e7132
+      size: 5576
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: ccd642aaf3f0757b4d04495cf41cb7f4.dir
+      size: 2565880
+      nfiles: 300
+  prepare:
+    cmd: .venv/bin/python scripts/prepare_data.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: ccd642aaf3f0757b4d04495cf41cb7f4.dir
+      size: 2565880
+      nfiles: 300
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: 24d8db616f45441d39a68c2f82986677
+      size: 1690
+    - path: src/object_detection/data/preprocessing.py
+      hash: md5
+      md5: ce69478517dc90ef6338b26a1122dc44
+      size: 3846
+    - path: src/object_detection/data/validation.py
+      hash: md5
+      md5: 3616de9dd8448a74b4825d081f23ba18
+      size: 4772
+    params:
+      params.yaml:
+        dataset.test_split: 0.1
+        dataset.train_split: 0.8
+        dataset.val_split: 0.1
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 7ee1d80beffc70f81cfb411a865fb26a.dir
+      size: 2528904
+      nfiles: 153
+  train:
+    cmd: .venv/bin/python scripts/train.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 7ee1d80beffc70f81cfb411a865fb26a.dir
+      size: 2528904
+      nfiles: 153
+    - path: scripts/train.py
+      hash: md5
+      md5: bcfb7c81c2fa8debe2f068745de8a50e
+      size: 2345
+    - path: src/object_detection/models/model_factory.py
+      hash: md5
+      md5: 91ba1d97f393a7b1f2ab84a21477fb2a
+      size: 2113
+    - path: src/object_detection/training/trainer.py
+      hash: md5
+      md5: 62df14d2f37413618f21aecb04347c93
+      size: 7130
+    params:
+      params.yaml:
+        training.batch_size: 4
+        training.epochs: 5
+        training.learning_rate: 0.005
+    outs:
+    - path: artifacts/models
+      hash: md5
+      md5: 824bfb66e0132fb5b361ac89b1948312.dir
+      size: 660355200
+      nfiles: 2
+  evaluate:
+    cmd: .venv/bin/python scripts/evaluate.py
+    deps:
+    - path: artifacts/models
+      hash: md5
+      md5: 824bfb66e0132fb5b361ac89b1948312.dir
+      size: 660355200
+      nfiles: 2
+    - path: data/processed
+      hash: md5
+      md5: 7ee1d80beffc70f81cfb411a865fb26a.dir
+      size: 2528904
+      nfiles: 153
+    - path: scripts/evaluate.py
+      hash: md5
+      md5: 336211431a380f5472f809562f42566a
+      size: 1353
+    - path: src/object_detection/evaluation/evaluator.py
+      hash: md5
+      md5: 28d937300566b25a2a46d9746ec0c6f8
+      size: 3967
+    outs:
+    - path: artifacts/metrics/evaluation.json
+      hash: md5
+      md5: 9b35ef38c77945b6cada315b14242b1e
+      size: 1056
+  prepare_real:
+    cmd: .venv/bin/python scripts/prepare_real_data.py
+    deps:
+    - path: Hard Hat Workers.v2-raw.voc
+      hash: md5
+      md5: 42aaa428f72d3da3988865fe7812b5cc.dir
+      size: 250080715
+      nfiles: 14072
+    - path: configs/config.yaml
+      hash: md5
+      md5: 455fac999e63a7df56e0821c1a1b90b5
+      size: 1497
+    - path: scripts/prepare_real_data.py
+      hash: md5
+      md5: 0a9e31046ee4b5a073a3dde3cff27f11
+      size: 2466
+    - path: src/object_detection/data/voc.py
+      hash: md5
+      md5: dddfc328cf4785d96a9aa3103d8dbd45
+      size: 4976
+    params:
+      params.yaml:
+        dataset.val_split: 0.15
+        project.seed: 42
+    outs:
+    - path: artifacts/metrics/dataset_report.json
+      hash: md5
+      md5: d06469f5a1c7add78ff5c54446be797c
+      size: 22763
+    - path: data/processed_real
+      hash: md5
+      md5: 891e845427f1d8d7b32a4afb302050cb.dir
+      size: 5571165
+      nfiles: 4

@@ -1,0 +1,194 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Faster R-CNN Object Detection System API",
+    "description": "Production Postman collection for testing the Faster R-CNN Industrial Safety Object Detection microservice.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Root Banner",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            ""
+          ]
+        },
+        "description": "Returns API title and documentation sitemap link."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response contains API title', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.title).to.include('Production-Grade Object Detection System');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Monitors microservice status, device allocation, and model loading state."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Health status is ok and model is loaded', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql('ok');",
+              "    pm.expect(jsonData.model_loaded).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Object Detection Predict (JSON)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "data/processed/test/images/construction_0014.jpg",
+              "description": "Target image file for object detection"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/predict?confidence_threshold=0.5",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "predict"
+          ],
+          "query": [
+            {
+              "key": "confidence_threshold",
+              "value": "0.5"
+            }
+          ]
+        },
+        "description": "Performs object detection inference on an uploaded image, returning detected bounding boxes, classes, and confidence scores."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Inference prediction success', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.predictions).to.be.an('array');",
+              "    pm.expect(jsonData.inference_time_ms).to.be.a('number');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Predict Visualize (JPEG)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "data/processed/test/images/construction_0014.jpg",
+              "description": "Target image file"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/predict/visualize?confidence_threshold=0.5",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "predict",
+            "visualize"
+          ],
+          "query": [
+            {
+              "key": "confidence_threshold",
+              "value": "0.5"
+            }
+          ]
+        },
+        "description": "Returns annotated JPEG binary image overlaid with bounding box predictions."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Content-Type is image/jpeg', function () {",
+              "    pm.response.to.have.header('Content-Type', 'image/jpeg');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

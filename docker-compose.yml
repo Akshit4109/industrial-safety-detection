@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  object_detection_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: object-detection-api:latest
+    container_name: object_detection_microservice
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./configs:/app/configs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

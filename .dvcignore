@@ -1,0 +1,5 @@
+# DVC ignore patterns
+.git
+.venv
+__pycache__
+.DS_Store
